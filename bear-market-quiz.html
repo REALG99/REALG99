@@ -41,6 +41,21 @@
       font-weight: bold;
       cursor: pointer;
     }
+.progress-container {
+  width: 100%;
+  background: #334155;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  height: 10px;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 0%;
+  background: #38bdf8;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
 
     #result {
       margin-top: 40px;
@@ -59,6 +74,9 @@
 <div class="container">
 
 <h1>Can You Survive a Bear Market?</h1>
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
 
 <form id="quizForm">
 
@@ -143,11 +161,23 @@
 </div>
 
 <script>
+const totalQuestions = 10;
+
+document.querySelectorAll('input[type="radio"]').forEach(input => {
+  input.addEventListener('change', updateProgress);
+});
+
+function updateProgress() {
+  const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+  const percent = (answered / totalQuestions) * 100;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
+
 function calculateResult() {
   let total = 0;
   const answers = document.querySelectorAll('input[type="radio"]:checked');
   
-  if (answers.length < 10) {
+  if (answers.length < totalQuestions) {
     document.getElementById("result").innerHTML = "Please answer all questions.";
     return;
   }
@@ -156,14 +186,20 @@ function calculateResult() {
     total += parseInt(answer.value);
   });
 
-  if (total <= 4) {
-    document.getElementById("result").innerHTML = "High Emotional Risk – Bear markets may heavily affect your decisions.";
-  } else if (total <= 7) {
-    document.getElementById("result").innerHTML = "Moderate Resilience – You manage risk but may struggle under extreme pressure.";
+  let resultText = "";
+
+  if (total <= 15) {
+    resultText = "High Emotional Risk – Bear markets may heavily affect your decisions.";
+  } else if (total <= 23) {
+    resultText = "Moderate Resilience – You manage risk but may struggle under extreme pressure.";
   } else {
-    document.getElementById("result").innerHTML = "Strong Bear Market Survivor – You maintain discipline under volatility.";
+    resultText = "Strong Bear Market Survivor – You maintain discipline under volatility.";
   }
+
+  document.getElementById("result").innerHTML = resultText;
+  document.getElementById("result").scrollIntoView({ behavior: "smooth" });
 }
+
 </script>
 
 </body>
